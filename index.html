@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nosso Calendário</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Karla:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --marsala:#7B2D43;
+    --marsala-deep:#5C1F32;
+    --marsala-rich:#913A54;
+    --marsala-light:#B0607A;
+    --marsala-soft:rgba(123,45,67,.10);
+    --marsala-softer:rgba(123,45,67,.06);
+    --blush:#F5E6EA;
+    --blush-deep:#EBD0D8;
+    --gold:#C9A96E;
+    --gold-soft:rgba(201,169,110,.18);
+    --bg:#FBF6F3;
+    --card:#FFFFFF;
+    --text:#3A1E26;
+    --muted:#A0828A;
+    --border:rgba(123,45,67,.16);
+    --shadow:0 10px 40px -12px rgba(92,31,50,.25);
+    --shadow-soft:0 4px 18px -6px rgba(92,31,50,.15);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Karla',sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    line-height:1.5;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(123,45,67,.08), transparent),
+      radial-gradient(ellipse 60% 40% at 100% 100%, rgba(201,169,110,.08), transparent);
+  }
+  .serif{font-family:'Playfair Display',serif}
+
+  header{
+    max-width:1200px;
+    margin:0 auto;
+    padding:2.2rem 1.5rem 1rem;
+    text-align:center;
+  }
+  .eyebrow{
+    display:inline-block;
+    font-size:.72rem;
+    letter-spacing:.35em;
+    text-transform:uppercase;
+    color:var(--marsala-light);
+    font-weight:600;
+    margin-bottom:.6rem;
+  }
+  h1{
+    font-family:'Playfair Display',serif;
+    font-weight:600;
+    font-size:clamp(1.9rem,4.5vw,3rem);
+    color:var(--marsala-deep);
+    line-height:1.15;
+    margin-bottom:.4rem;
+  }
+  h1 em{font-style:italic;color:var(--marsala);font-weight:400}
+  .subtitle{
+    color:var(--muted);
+    font-size:.95rem;
+    max-width:480px;
+    margin:0 auto 1.6rem;
+  }
+  .divider{
+    display:flex;align-items:center;justify-content:center;
+    gap:.8rem;margin:0 auto 1.6rem;max-width:300px;
+  }
+  .divider::before,.divider::after{
+    content:"";height:1px;flex:1;
+    background:linear-gradient(90deg,transparent,var(--border),transparent);
+  }
+  .divider svg{width:18px;height:18px;color:var(--gold);flex-shrink:0}
+
+  .controls{
+    display:flex;flex-wrap:wrap;gap:.7rem;
+    justify-content:center;align-items:center;
+    margin-bottom:1rem;
+  }
+  .person-toggle{
+    display:inline-flex;background:var(--card);
+    border:1px solid var(--border);border-radius:999px;
+    padding:.25rem;box-shadow:var(--shadow-soft);
+  }
+  .person-toggle button{
+    border:none;background:transparent;cursor:pointer;
+    padding:.5rem 1.3rem;border-radius:999px;
+    font-family:'Karla',sans-serif;font-weight:600;font-size:.88rem;
+    color:var(--muted);transition:all .25s ease;
+  }
+  .person-toggle button.active{
+    background:var(--marsala);color:#fff;
+    box-shadow:0 4px 12px -2px rgba(123,45,67,.5);
+  }
+  .person-toggle button.active.b-side{
+    background:linear-gradient(135deg,var(--gold),#B89458);
+    box-shadow:0 4px 12px -2px rgba(201,169,110,.55);
+  }
+  .year-nav{
+    display:inline-flex;align-items:center;gap:.2rem;
+    background:var(--card);border:1px solid var(--border);
+    border-radius:999px;padding:.25rem;box-shadow:var(--shadow-soft);
+  }
+  .year-nav button{
+    border:none;background:transparent;cursor:pointer;
+    width:34px;height:34px;border-radius:50%;
+    color:var(--marsala);display:flex;align-items:center;justify-content:center;
+    transition:background .2s;
+  }
+  .year-nav button:hover{background:var(--marsala-soft)}
+  .year-nav svg{width:16px;height:16px}
+  .year-nav .year-label{
+    font-family:'Playfair Display',serif;font-weight:600;
+    font-size:1.05rem;color:var(--marsala-deep);
+    min-width:64px;text-align:center;
+  }
+  .icon-btn{
+    border:1px solid var(--border);background:var(--card);
+    width:42px;height:42px;border-radius:50%;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--marsala);transition:all .2s;box-shadow:var(--shadow-soft);
+  }
+  .icon-btn:hover{background:var(--marsala);color:#fff;transform:rotate(30deg)}
+  .icon-btn svg{width:18px;height:18px}
+  .sync-pill{
+    display:inline-flex;align-items:center;gap:.4rem;
+    font-size:.75rem;font-weight:600;padding:.4rem .85rem;
+    border-radius:999px;border:1px solid var(--border);
+    background:var(--card);color:var(--muted);
+  }
+  .sync-pill.online{color:#2E7D5B;border-color:rgba(46,125,91,.3);background:rgba(46,125,91,.06)}
+  .sync-pill.offline{color:var(--muted)}
+  .sync-pill .dot{width:7px;height:7px;border-radius:50%;background:currentColor;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+  .stats{
+    display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;
+    margin-top:.8rem;font-size:.82rem;color:var(--muted);
+  }
+  .stats b{color:var(--marsala);font-weight:700;font-family:'Playfair Display',serif;font-size:1.1rem}
+
+  main{
+    max-width:1200px;margin:0 auto;
+    padding:1rem 1.5rem 3rem;
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+    gap:1.4rem;
+  }
+  .month{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:1.1rem 1.1rem 1.2rem;
+    box-shadow:var(--shadow-soft);
+    transition:transform .25s ease, box-shadow .25s ease;
+    position:relative;overflow:hidden;
+  }
+  .month::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:3px;
+    background:linear-gradient(90deg,var(--marsala),var(--gold),var(--marsala-light));
+    opacity:.7;
+  }
+  .month:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+  .month.current-month{border-color:var(--marsala-light)}
+  .month h2{
+    font-family:'Playfair Display',serif;
+    font-weight:600;font-size:1.15rem;
+    color:var(--marsala-deep);
+    text-align:center;margin-bottom:.7rem;
+    letter-spacing:.02em;
+  }
+  .weekdays{
+    display:grid;grid-template-columns:repeat(7,1fr);
+    gap:2px;margin-bottom:4px;
+  }
+  .weekdays span{
+    text-align:center;font-size:.62rem;font-weight:700;
+    letter-spacing:.08em;text-transform:uppercase;
+    color:var(--marsala-light);padding:2px 0;
+  }
+  .days{
+    display:grid;grid-template-columns:repeat(7,1fr);
+    gap:2px;
+  }
+  .day{
+    aspect-ratio:1;
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    border-radius:9px;
+    font-size:.82rem;font-weight:500;
+    cursor:pointer;position:relative;
+    transition:all .18s ease;
+    color:var(--text);
+    border:1px solid transparent;
+  }
+  .day.empty{cursor:default;background:transparent}
+  .day:not(.empty):not(.locked):hover{
+    background:var(--marsala-soft);
+    border-color:var(--marsala-light);
+    transform:scale(1.08);
+    z-index:2;
+  }
+  .day.today{
+    background:var(--marsala);color:#fff;
+    font-weight:700;
+    box-shadow:0 4px 12px -2px rgba(123,45,67,.55);
+  }
+  .day.today:hover{background:var(--marsala-rich)}
+  .day.locked{
+    color:var(--muted);cursor:not-allowed;opacity:.55;
+    background:var(--marsala-softer);
+  }
+  .day.locked:hover{background:var(--marsala-softer);transform:none}
+  .day.locked svg{width:9px;height:9px;opacity:.6;margin-top:1px}
+  .day.has-msg::after{
+    content:"";position:absolute;bottom:3px;left:50%;transform:translateX(-50%);
+    width:5px;height:5px;border-radius:50%;background:var(--gold);
+  }
+  .day.has-both::after{
+    width:11px;background:linear-gradient(90deg,var(--marsala-light),var(--gold));
+  }
+  .day .num{line-height:1}
+
+  .overlay{
+    position:fixed;inset:0;background:rgba(60,20,32,.55);
+    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    display:none;align-items:center;justify-content:center;
+    z-index:100;padding:1rem;
+    animation:fadeIn .25s ease;
+  }
+  .overlay.open{display:flex}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .modal{
+    background:var(--card);border-radius:22px;
+    width:100%;max-width:460px;max-height:90vh;overflow-y:auto;
+    box-shadow:0 30px 80px -20px rgba(0,0,0,.4);
+    animation:slideUp .3s cubic-bezier(.2,.9,.3,1.2);
+    position:relative;
+  }
+  @keyframes slideUp{from{opacity:0;transform:translateY(30px) scale(.96)}to{opacity:1;transform:none}}
+  .modal-head{
+    padding:1.6rem 1.6rem 1rem;
+    text-align:center;position:relative;
+    background:linear-gradient(160deg,var(--marsala-soft),var(--gold-soft));
+    border-radius:22px 22px 0 0;
+  }
+  .modal-head .date-eyebrow{
+    font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;
+    color:var(--marsala-light);font-weight:700;margin-bottom:.3rem;
+  }
+  .modal-head h3{
+    font-family:'Playfair Display',serif;font-weight:600;
+    font-size:1.5rem;color:var(--marsala-deep);
+  }
+  .modal-close{
+    position:absolute;top:1rem;right:1rem;
+    width:32px;height:32px;border-radius:50%;
+    border:none;background:rgba(255,255,255,.7);cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--marsala-deep);transition:all .2s;
+  }
+  .modal-close:hover{background:var(--marsala);color:#fff;transform:rotate(90deg)}
+  .modal-close svg{width:16px;height:16px}
+  .modal-body{padding:1.2rem 1.6rem 1.6rem}
+
+  .msg-block{
+    border:1px solid var(--border);border-radius:14px;
+    padding:.9rem 1rem;margin-bottom:.9rem;
+    background:var(--bg);position:relative;
+  }
+  .msg-block .who{
+    display:flex;align-items:center;gap:.5rem;
+    font-size:.72rem;font-weight:700;letter-spacing:.1em;
+    text-transform:uppercase;margin-bottom:.4rem;
+  }
+  .msg-block .who .avatar{
+    width:22px;height:22px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:.65rem;font-weight:700;color:#fff;flex-shrink:0;
+  }
+  .msg-block.a-side .who{color:var(--marsala)}
+  .msg-block.a-side .avatar{background:var(--marsala)}
+  .msg-block.b-side .who{color:#A8864A}
+  .msg-block.b-side .avatar{background:var(--gold)}
+  .msg-block .text{
+    font-size:.92rem;line-height:1.55;color:var(--text);
+    white-space:pre-wrap;word-break:break-word;
+    font-family:'Playfair Display',serif;font-style:italic;
+  }
+  .msg-block .empty-note{
+    font-size:.82rem;color:var(--muted);font-style:italic;
+    font-family:'Karla',sans-serif;
+  }
+  .msg-block.mine{border-color:var(--marsala-light);background:var(--blush)}
+  .msg-block.mine.b-side{border-color:var(--gold);background:rgba(201,169,110,.1)}
+
+  .editor-label{
+    font-size:.72rem;font-weight:700;letter-spacing:.15em;
+    text-transform:uppercase;color:var(--marsala-light);
+    margin:.8rem 0 .4rem;display:flex;align-items:center;gap:.4rem;
+  }
+  textarea{
+    width:100%;min-height:90px;resize:vertical;
+    border:1.5px solid var(--border);border-radius:12px;
+    padding:.8rem 1rem;font-family:'Karla',sans-serif;
+    font-size:.92rem;color:var(--text);background:var(--card);
+    transition:border-color .2s, box-shadow .2s;outline:none;
+  }
+  textarea:focus{
+    border-color:var(--marsala);
+    box-shadow:0 0 0 3px var(--marsala-soft);
+  }
+  .btn-row{display:flex;gap:.6rem;margin-top:.9rem}
+  .btn{
+    flex:1;border:none;cursor:pointer;
+    padding:.75rem 1.2rem;border-radius:12px;
+    font-family:'Karla',sans-serif;font-weight:700;font-size:.88rem;
+    letter-spacing:.03em;transition:all .2s;
+    display:flex;align-items:center;justify-content:center;gap:.5rem;
+  }
+  .btn-primary{
+    background:linear-gradient(135deg,var(--marsala),var(--marsala-rich));
+    color:#fff;box-shadow:0 6px 16px -4px rgba(123,45,67,.5);
+  }
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 22px -4px rgba(123,45,67,.55)}
+  .btn-primary:active{transform:translateY(0)}
+  .btn-ghost{
+    background:transparent;color:var(--muted);
+    border:1px solid var(--border);
+  }
+  .btn-ghost:hover{background:var(--marsala-softer);color:var(--marsala)}
+  .btn svg{width:16px;height:16px}
+
+  .locked-msg{
+    text-align:center;padding:1.5rem 1rem;
+  }
+  .locked-msg .lock-icon{
+    width:56px;height:56px;margin:0 auto 1rem;
+    border-radius:50%;background:var(--marsala-soft);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--marsala);
+  }
+  .locked-msg .lock-icon svg{width:24px;height:24px}
+  .locked-msg h4{
+    font-family:'Playfair Display',serif;font-weight:600;
+    font-size:1.2rem;color:var(--marsala-deep);margin-bottom:.4rem;
+  }
+  .locked-msg p{color:var(--muted);font-size:.9rem}
+  .countdown{
+    display:inline-flex;gap:.5rem;margin-top:1rem;
+  }
+  .countdown .cd-unit{
+    background:var(--marsala);color:#fff;border-radius:10px;
+    padding:.5rem .7rem;min-width:52px;text-align:center;
+  }
+  .countdown .cd-unit b{
+    display:block;font-family:'Playfair Display',serif;
+    font-size:1.3rem;line-height:1;
+  }
+  .countdown .cd-unit span{font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;opacity:.85}
+
+  .config-section{margin-bottom:1.3rem}
+  .config-section h4{
+    font-size:.78rem;font-weight:700;letter-spacing:.15em;
+    text-transform:uppercase;color:var(--marsala);
+    margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem;
+  }
+  .config-section h4 svg{width:14px;height:14px}
+  .field{margin-bottom:.8rem}
+  .field label{
+    display:block;font-size:.78rem;font-weight:600;
+    color:var(--muted);margin-bottom:.3rem;
+  }
+  .field input{
+    width:100%;border:1.5px solid var(--border);border-radius:10px;
+    padding:.6rem .85rem;font-family:'Karla',sans-serif;
+    font-size:.88rem;outline:none;transition:all .2s;background:var(--card);
+  }
+  .field input:focus{border-color:var(--marsala);box-shadow:0 0 0 3px var(--marsala-soft)}
+  .hint{
+    font-size:.75rem;color:var(--muted);margin-top:.35rem;line-height:1.45;
+  }
+  .hint a{color:var(--marsala);font-weight:600}
+  .status-line{
+    font-size:.8rem;padding:.6rem .9rem;border-radius:10px;
+    margin-top:.6rem;display:none;
+  }
+  .status-line.ok{display:block;background:rgba(46,125,91,.1);color:#2E7D5B;border:1px solid rgba(46,125,91,.25)}
+  .status-line.err{display:block;background:rgba(193,60,60,.08);color:#B04040;border:1px solid rgba(193,60,60,.25)}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+
+  .toast{
+    position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(100px);
+    background:var(--marsala-deep);color:#fff;
+    padding:.8rem 1.4rem;border-radius:999px;
+    font-size:.88rem;font-weight:600;z-index:200;
+    box-shadow:0 12px 30px -8px rgba(0,0,0,.4);
+    transition:transform .35s cubic-bezier(.2,.9,.3,1.3);
+    display:flex;align-items:center;gap:.5rem;max-width:90vw;
+  }
+  .toast.show{transform:translateX(-50%) translateY(0)}
+  .toast svg{width:16px;height:16px;color:var(--gold);flex-shrink:0}
+
+  .heart-float{
+    position:fixed;pointer-events:none;z-index:150;
+    color:var(--marsala-light);
+    animation:floatUp 1.6s ease-out forwards;
+  }
+  .heart-float svg{width:22px;height:22px;fill:currentColor}
+  @keyframes floatUp{
+    0%{opacity:0;transform:translateY(0) scale(.5)}
+    15%{opacity:1;transform:translateY(-20px) scale(1.1)}
+    100%{opacity:0;transform:translateY(-140px) scale(.7) rotate(20deg)}
+  }
+
+  footer{
+    text-align:center;padding:2rem 1rem 3rem;
+    color:var(--muted);font-size:.78rem;
+  }
+  footer .serif{color:var(--marsala-light);font-style:italic}
+
+  @media (max-width:640px){
+    main{grid-template-columns:1fr;padding:1rem 1rem 2rem;gap:1rem}
+    .month{padding:.9rem}
+    .day{font-size:.78rem;border-radius:7px}
+    .controls{gap:.5rem}
+    .stats{gap:1rem;font-size:.75rem}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="eyebrow">Para o amor da minha vida</span>
+  <h1>Nosso <em>Calendário</em></h1>
+  <div class="divider">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.5-9.5-9C.8 8.5 2.5 5 6 5c2 0 3.5 1 4.5 2.5C11.5 6 13 5 15 5c3.5 0 5.2 3.5 3.5 7-2.5 4.5-6.5 9-6.5 9z"/></svg>
+  </div>
+  <p class="subtitle">Cada dia guarda uma palavra de amor. Escreva a sua, descubra a dela.</p>
+
+  <div class="controls">
+    <div class="person-toggle" id="personToggle">
+      <button data-person="a" class="active">Ela</button>
+      <button data-person="b" class="b-side">Amor</button>
+    </div>
+    <div class="year-nav">
+      <button id="prevYear" aria-label="Ano anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <span class="year-label" id="yearLabel">2026</span>
+      <button id="nextYear" aria-label="Próximo ano"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+    <button class="icon-btn" id="configBtn" title="Configurações e sincronização">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+  </div>
+
+  <div class="controls" style="margin-top:.2rem">
+    <span class="sync-pill offline" id="syncPill">
+      <span class="dot"></span><span id="syncText">Modo local — configure a sincronização</span>
+    </span>
+  </div>
+
+  <div class="stats" id="stats">
+    <span><b id="statA">0</b> de <span id="statNameA">Ela</span></span>
+    <span><b id="statB">0</b> de <span id="statNameB">Amor</span></span>
+    <span><b id="statDays">0</b> dias preenchidos</span>
+  </div>
+</header>
+
+<main id="calendar"></main>
+
+<footer>
+  <p>Feito com <span class="serif">amor</span> — cada dia é uma página da nossa história.</p>
+</footer>
+
+<div class="overlay" id="dayOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <button class="modal-close" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <div class="date-eyebrow" id="modalDateEyebrow">19 de Outubro</div>
+      <h3 id="modalDateTitle">Segunda-feira</h3>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<div class="overlay" id="configOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <button class="modal-close" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <div class="date-eyebrow">Ajustes</div>
+      <h3>Configurações</h3>
+    </div>
+    <div class="modal-body">
+      <div class="config-section">
+        <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Nomes de vocês</h4>
+        <div class="two-col">
+          <div class="field">
+            <label>Nome dela (botão marsala)</label>
+            <input type="text" id="cfgNameA" placeholder="Ela" maxlength="20">
+          </div>
+          <div class="field">
+            <label>Nome dela (botão dourado)</label>
+            <input type="text" id="cfgNameB" placeholder="Amor" maxlength="20">
+          </div>
+        </div>
+        <p class="hint">Cada uma deve selecionar o seu próprio botão no topo do site.</p>
+      </div>
+
+      <div class="config-section">
+        <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg> Sincronização entre vocês</h4>
+        <div class="field">
+          <label>URL do seu banco de mensagens</label>
+          <input type="url" id="cfgSyncUrl" placeholder="https://script.google.com/macros/s/.../exec">
+          <p class="hint">Cole aqui a URL do Google Apps Script. Assim as mensagens aparecem para as duas. <a href="#" id="howToLink">Como conseguir essa URL? (2 minutos)</a></p>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="testSyncBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Conectar e sincronizar
+          </button>
+          <button class="btn btn-ghost" id="disconnectBtn">Desconectar</button>
+        </div>
+        <div class="status-line" id="syncStatus"></div>
+      </div>
+
+      <div class="config-section">
+        <h4><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Backup local</h4>
+        <div class="btn-row">
+          <button class="btn btn-ghost" id="exportBtn">Exportar mensagens</button>
+          <button class="btn btn-ghost" id="importBtn">Importar arquivo</button>
+        </div>
+        <input type="file" id="importFile" accept=".json" style="display:none">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="howtoOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <button class="modal-close" data-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <div class="date-eyebrow">Passo a passo</div>
+      <h3>Como sincronizar (2 min)</h3>
+    </div>
+    <div class="modal-body" style="font-size:.88rem;line-height:1.65">
+      <p style="margin-bottom:.8rem">Vocês duas verão as mensagens uma da outra usando uma planilha do Google como "banco de dados". É gratuito:</p>
+      <ol style="padding-left:1.2rem;color:var(--text)">
+        <li style="margin-bottom:.6rem">Abra o <b>Google Sheets</b> e crie uma planilha nova (ex: "Mensagens do Amor").</li>
+        <li style="margin-bottom:.6rem">No menu, clique em <b>Extensões → Apps Script</b>.</li>
+        <li style="margin-bottom:.6rem">Apague todo o código que aparece e cole o código do arquivo <code style="background:var(--blush);padding:1px 6px;border-radius:4px;font-size:.8rem">sincronizador.gs</code> (vem junto com este site).</li>
+        <li style="margin-bottom:.6rem">Clique em <b>Salvar</b> (ícone de disquete) e dê um nome ao projeto.</li>
+        <li style="margin-bottom:.6rem">Clique em <b>Implantar → Nova implantação</b> → escolha o tipo <b>"Aplicativo da Web"</b>.</li>
+        <li style="margin-bottom:.6rem">Em "Executar como" escolha <b>Eu</b>. Em "Quem pode acessar" escolha <b>Qualquer pessoa</b>. Clique em <b>Implantar</b> e autorize.</li>
+        <li>Copie a <b>URL do aplicativo da Web</b> (começa com <code style="background:var(--blush);padding:1px 6px;border-radius:4px;font-size:.8rem">script.google.com/macros/s/</code>) e cole no campo acima.</li>
+      </ol>
+      <p style="margin-top:.9rem;color:var(--muted);font-size:.8rem">Pronto! Quando uma de vocês escrever uma mensagem, a outra verá em até 30 segundos. Essa URL é a mesma para as duas — ambas colam a mesma.</p>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.5-9.5-9C.8 8.5 2.5 5 6 5c2 0 3.5 1 4.5 2.5C11.5 6 13 5 15 5c3.5 0 5.2 3.5 3.5 7-2.5 4.5-6.5 9-6.5 9z"/></svg><span id="toastText">Mensagem salva!</span></div>
+
+<script>
+(function(){
+  'use strict';
+
+  var STORAGE_KEY = 'nosso_calendario_v2';
+  var state = {
+    person: 'a',
+    year: new Date().getFullYear(),
+    data: { names: { a: 'Ela', b: 'Amor' }, messages: {} },
+    syncUrl: '',
+    syncTimer: null,
+    lastSync: 0
+  };
+
+  var MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  var WEEKDAYS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  var WEEKDAYS_FULL = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+  var SIDES = ['a','b'];
+
+  function load(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        var parsed = JSON.parse(raw);
+        if(parsed && parsed.data) state.data = parsed.data;
+        if(parsed && parsed.syncUrl) state.syncUrl = parsed.syncUrl;
+        if(parsed && parsed.person) state.person = parsed.person;
+        // garante estrutura
+        if(!state.data.names) state.data.names = { a:'Ela', b:'Amor' };
+        if(!state.data.messages) state.data.messages = {};
+      }
+    }catch(e){ console.warn('erro ao carregar', e); }
+  }
+  function save(){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        data: state.data, syncUrl: state.syncUrl, person: state.person
+      }));
+    }catch(e){ console.warn('erro ao salvar', e); }
+  }
+
+  function pad(n){ return n<10 ? '0'+n : ''+n; }
+  function dateKey(y,m,d){ return y + '-' + pad(m+1) + '-' + pad(d); }
+  function todayKey(){
+    var t = new Date();
+    return dateKey(t.getFullYear(), t.getMonth(), t.getDate());
+  }
+  function isFuture(key){ return key > todayKey(); }
+  function parseKey(key){
+    var p = key.split('-');
+    return { y: +p[0], m: +p[1]-1, d: +p[2] };
+  }
+  function formatDateShort(key){
+    var p = parseKey(key);
+    return p.d + ' de ' + MONTHS[p.m];
+  }
+
+  var calendarEl = document.getElementById('calendar');
+  var todayK = todayKey();
+
+  function renderCalendar(){
+    calendarEl.innerHTML = '';
+    var currentMonth = new Date().getMonth();
+    var currentYear = new Date().getFullYear();
+
+    for(var m=0; m<12; m++){
+      (function(monthIdx){
+        var firstDay = new Date(state.year, monthIdx, 1).getDay();
+        var daysInMonth = new Date(state.year, monthIdx+1, 0).getDate();
+
+        var monthEl = document.createElement('div');
+        monthEl.className = 'month';
+        if(state.year === currentYear && monthIdx === currentMonth) monthEl.classList.add('current-month');
+
+        var h2 = document.createElement('h2');
+        h2.textContent = MONTHS[monthIdx] + ' ' + state.year;
+        monthEl.appendChild(h2);
+
+        var wd = document.createElement('div');
+        wd.className = 'weekdays';
+        WEEKDAYS.forEach(function(w){ var s=document.createElement('span'); s.textContent=w; wd.appendChild(s); });
+        monthEl.appendChild(wd);
+
+        var daysEl = document.createElement('div');
+        daysEl.className = 'days';
+
+        for(var i=0; i<firstDay; i++){
+          var empty = document.createElement('div');
+          empty.className = 'day empty';
+          daysEl.appendChild(empty);
+        }
+
+        for(var d=1; d<=daysInMonth; d++){
+          (function(day){
+            var key = dateKey(state.year, monthIdx, day);
+            var dayEl = document.createElement('div');
+            dayEl.className = 'day';
+            dayEl.dataset.key = key;
+
+            var msg = state.data.messages[key];
+            var hasA = msg && msg.a && msg.a.text && msg.a.text.trim();
+            var hasB = msg && msg.b && msg.b.text && msg.b.text.trim();
+
+            if(key === todayK) dayEl.classList.add('today');
+
+            if(isFuture(key)){
+              dayEl.classList.add('locked');
+              var num = document.createElement('span');
+              num.className = 'num';
+              num.textContent = day;
+              dayEl.appendChild(num);
+              var lock = document.createElementNS('http://www.w3.org/2000/svg','svg');
+              lock.setAttribute('viewBox','0 0 24 24');
+              lock.setAttribute('fill','none');
+              lock.setAttribute('stroke','currentColor');
+              lock.setAttribute('stroke-width','2.5');
+              lock.innerHTML = '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>';
+              dayEl.appendChild(lock);
+            } else {
+              if(hasA || hasB){
+                dayEl.classList.add('has-msg');
+                if(hasA && hasB) dayEl.classList.add('has-both');
+              }
+              var num2 = document.createElement('span');
+              num2.className = 'num';
+              num2.textContent = day;
+              dayEl.appendChild(num2);
+            }
+
+            dayEl.addEventListener('click', function(){ openDayModal(key); });
+            daysEl.appendChild(dayEl);
+          })(d);
+        }
+
+        monthEl.appendChild(daysEl);
+        calendarEl.appendChild(monthEl);
+      })(m);
+    }
+    updateStats();
+  }
+
+  function updateStats(){
+    var msgs = state.data.messages;
+    var cA=0, cB=0, cDays=0;
+    Object.keys(msgs).forEach(function(k){
+      var m = msgs[k];
+      var hA = m.a && m.a.text && m.a.text.trim();
+      var hB = m.b && m.b.text && m.b.text.trim();
+      if(hA) cA++;
+      if(hB) cB++;
+      if(hA || hB) cDays++;
+    });
+    document.getElementById('statA').textContent = cA;
+    document.getElementById('statB').textContent = cB;
+    document.getElementById('statDays').textContent = cDays;
+    document.getElementById('statNameA').textContent = state.data.names.a || 'Ela';
+    document.getElementById('statNameB').textContent = state.data.names.b || 'Amor';
+  }
+
+  var dayOverlay = document.getElementById('dayOverlay');
+  var modalBody = document.getElementById('modalBody');
+  var modalDateEyebrow = document.getElementById('modalDateEyebrow');
+  var modalDateTitle = document.getElementById('modalDateTitle');
+  var currentOpenKey = null;
+
+  function heartSVG(){ return '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.5-9.5-9C.8 8.5 2.5 5 6 5c2 0 3.5 1 4.5 2.5C11.5 6 13 5 15 5c3.5 0 5.2 3.5 3.5 7-2.5 4.5-6.5 9-6.5 9z"/></svg>'; }
+
+  function openDayModal(key){
+    currentOpenKey = key;
+    var p = parseKey(key);
+    var dt = new Date(p.y, p.m, p.d);
+    modalDateEyebrow.textContent = formatDateShort(key);
+    modalDateTitle.textContent = WEEKDAYS_FULL[dt.getDay()];
+
+    if(isFuture(key)){
+      renderLockedDay(key);
+    } else {
+      renderEditableDay(key);
+    }
+    dayOverlay.classList.add('open');
+  }
+
+  function renderLockedDay(key){
+    var p = parseKey(key);
+    var target = new Date(p.y, p.m, p.d, 0, 0, 0).getTime();
+    var now = Date.now();
+    var diff = Math.max(0, target - now);
+    var days = Math.floor(diff / 86400000);
+    var hours = Math.floor((diff % 86400000) / 3600000);
+    var mins = Math.floor((diff % 3600000) / 60000);
+
+    modalBody.innerHTML =
+      '<div class="locked-msg">' +
+        '<div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>' +
+        '<h4>Esse dia ainda não chegou</h4>' +
+        '<p>As mensagens só podem ser escritas a partir do dia em si. A paciência é parte do amor.</p>' +
+        '<div class="countdown">' +
+          '<div class="cd-unit"><b>' + days + '</b><span>dias</span></div>' +
+          '<div class="cd-unit"><b>' + hours + '</b><span>horas</span></div>' +
+          '<div class="cd-unit"><b>' + mins + '</b><span>min</span></div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function escapeHtml(str){
+    var div = document.createElement('div');
+    div.textContent = str == null ? '' : String(str);
+    return div.innerHTML;
+  }
+
+  function renderEditableDay(key){
+    var msg = state.data.messages[key] || {};
+    var nameA = state.data.names.a || 'Ela';
+    var nameB = state.data.names.b || 'Amor';
+    var myName = state.person === 'a' ? nameA : nameB;
+
+    var textA = msg.a && msg.a.text ? msg.a.text : '';
+    var textB = msg.b && msg.b.text ? msg.b.text : '';
+
+    var html = '';
+
+    html += '<div class="msg-block a-side' + (state.person==='a'?' mine':'') + '">' +
+      '<div class="who"><span class="avatar">' + escapeHtml(nameA.charAt(0).toUpperCase()) + '</span>' + escapeHtml(nameA) + '</div>' +
+      (textA ? '<div class="text">' + escapeHtml(textA) + '</div>' : '<div class="empty-note">Ainda sem mensagem por aqui...</div>') +
+    '</div>';
+
+    html += '<div class="msg-block b-side' + (state.person==='b'?' mine':'') + '">' +
+      '<div class="who"><span class="avatar">' + escapeHtml(nameB.charAt(0).toUpperCase()) + '</span>' + escapeHtml(nameB) + '</div>' +
+      (textB ? '<div class="text">' + escapeHtml(textB) + '</div>' : '<div class="empty-note">Ainda sem mensagem por aqui...</div>') +
+    '</div>';
+
+    html += '<div class="editor-label">' + heartSVG() + ' Sua mensagem, ' + escapeHtml(myName) + '</div>' +
+      '<textarea id="msgInput" placeholder="Escreva o que você sente neste dia...">' + escapeHtml(state.person==='a'?textA:textB) + '</textarea>' +
+      '<div class="btn-row">' +
+        '<button class="btn btn-primary" id="saveMsgBtn">' + heartSVG() + ' Salvar mensagem</button>' +
+      '</div>';
+
+    modalBody.innerHTML = html;
+
+    document.getElementById('saveMsgBtn').addEventListener('click', function(){
+      saveMessage(key);
+    });
+  }
+
+  function saveMessage(key){
+    var textarea = document.getElementById('msgInput');
+    var text = textarea.value.trim();
+    var now = Date.now();
+
+    if(!state.data.messages[key]) state.data.messages[key] = {};
+    state.data.messages[key][state.person] = { text: text, ts: now };
+
+    save();
+    renderCalendar();
+    renderEditableDay(key);
+    showToast('Mensagem salva com amor!');
+    spawnHearts();
+    pushToRemote();
+  }
+
+  var toastEl = document.getElementById('toast');
+  var toastTimer = null;
+  function showToast(msg){
+    document.getElementById('toastText').textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.classList.remove('show'); }, 2600);
+  }
+  function spawnHearts(){
+    for(var i=0; i<6; i++){
+      (function(i){
+        setTimeout(function(){
+          var h = document.createElement('div');
+          h.className = 'heart-float';
+          h.innerHTML = heartSVG();
+          h.style.left = (40 + Math.random()*20) + '%';
+          h.style.bottom = '20%';
+          h.style.animationDelay = (i*0.08) + 's';
+          document.body.appendChild(h);
+          setTimeout(function(){ h.remove(); }, 1800);
+        }, i*90);
+      })(i);
+    }
+  }
+
+  var syncPill = document.getElementById('syncPill');
+  var syncText = document.getElementById('syncText');
+
+  function updateSyncPill(){
+    if(state.syncUrl){
+      syncPill.className = 'sync-pill online';
+      syncText.textContent = 'Sincronizado — conectado';
+    } else {
+      syncPill.className = 'sync-pill offline';
+      syncText.textContent = 'Modo local — configure a sincronização';
+    }
+  }
+
+  function mergeRemote(remoteData){
+    if(!remoteData || !remoteData.messages) return false;
+    var changed = false;
+    if(remoteData.names){
+      if(remoteData.names.a && remoteData.names.a !== state.data.names.a){ state.data.names.a = remoteData.names.a; changed=true; }
+      if(remoteData.names.b && remoteData.names.b !== state.data.names.b){ state.data.names.b = remoteData.names.b; changed=true; }
+    }
+    Object.keys(remoteData.messages).forEach(function(key){
+      var rm = remoteData.messages[key];
+      if(!state.data.messages[key]) state.data.messages[key] = {};
+      SIDES.forEach(function(s){
+        if(rm[s] && rm[s].text){
+          var local = state.data.messages[key][s];
+          if(!local || !local.ts || (rm[s].ts && rm[s].ts > local.ts)){
+            state.data.messages[key][s] = { text: rm[s].text, ts: rm[s].ts || Date.now() };
+            changed = true;
+          }
+        }
+      });
+    });
+    return changed;
+  }
+
+  function pullFromRemote(){
+    if(!state.syncUrl) return Promise.resolve(false);
+    return fetch(state.syncUrl + '?t=' + Date.now(), { method:'GET' })
+      .then(function(r){ return r.json(); })
+      .then(function(remote){
+        var changed = mergeRemote(remote);
+        if(changed){ save(); renderCalendar(); updatePersonLabels(); }
+        state.lastSync = Date.now();
+        return changed;
+      })
+      .catch(function(err){
+        console.warn('sync pull error', err);
+        return false;
+      });
+  }
+
+  function pushToRemote(){
+    if(!state.syncUrl) return Promise.resolve();
+    var payload = JSON.stringify(state.data);
+    return fetch(state.syncUrl, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: payload
+    }).catch(function(err){ console.warn('sync push error', err); });
+  }
+
+  function startSyncLoop(){
+    stopSyncLoop();
+    state.syncTimer = setInterval(function(){ pullFromRemote(); }, 30000);
+  }
+  function stopSyncLoop(){
+    if(state.syncTimer){ clearInterval(state.syncTimer); state.syncTimer = null; }
+  }
+
+  var configOverlay = document.getElementById('configOverlay');
+  var howtoOverlay = document.getElementById('howtoOverlay');
+
+  function openConfig(){
+    document.getElementById('cfgNameA').value = state.data.names.a || '';
+    document.getElementById('cfgNameB').value = state.data.names.b || '';
+    document.getElementById('cfgSyncUrl').value = state.syncUrl || '';
+    document.getElementById('syncStatus').className = 'status-line';
+    document.getElementById('syncStatus').textContent = '';
+    configOverlay.classList.add('open');
+  }
+
+  function saveNames(){
+    var na = document.getElementById('cfgNameA').value.trim() || 'Ela';
+    var nb = document.getElementById('cfgNameB').value.trim() || 'Amor';
+    state.data.names.a = na;
+    state.data.names.b = nb;
+    save();
+    updatePersonLabels();
+    updateStats();
+    pushToRemote();
+  }
+
+  function updatePersonLabels(){
+    var btns = document.querySelectorAll('#personToggle button');
+    btns[0].textContent = state.data.names.a || 'Ela';
+    btns[1].textContent = state.data.names.b || 'Amor';
+  }
+
+  document.getElementById('configBtn').addEventListener('click', openConfig);
+  document.getElementById('cfgNameA').addEventListener('change', saveNames);
+  document.getElementById('cfgNameB').addEventListener('change', saveNames);
+
+  document.getElementById('testSyncBtn').addEventListener('click', function(){
+    var url = document.getElementById('cfgSyncUrl').value.trim();
+    var statusEl = document.getElementById('syncStatus');
+    if(!url){
+      statusEl.className = 'status-line err';
+      statusEl.textContent = 'Cole a URL do Apps Script primeiro.';
+      return;
+    }
+    state.syncUrl = url;
+    save();
+    statusEl.className = 'status-line';
+    statusEl.textContent = 'Conectando e baixando mensagens...';
+    pullFromRemote().then(function(changed){
+      statusEl.className = 'status-line ok';
+      statusEl.textContent = changed ? 'Conectado! Mensagens atualizadas.' : 'Conectado! Nenhuma mensagem nova no servidor.';
+      updateSyncPill();
+      startSyncLoop();
+      pushToRemote();
+    }).catch(function(){
+      statusEl.className = 'status-line err';
+      statusEl.textContent = 'Não foi possível conectar. Verifique a URL e se o Apps Script foi implantado corretamente.';
+    });
+  });
+
+  document.getElementById('disconnectBtn').addEventListener('click', function(){
+    state.syncUrl = '';
+    save();
+    stopSyncLoop();
+    updateSyncPill();
+    document.getElementById('cfgSyncUrl').value = '';
+    var statusEl = document.getElementById('syncStatus');
+    statusEl.className = 'status-line ok';
+    statusEl.textContent = 'Desconectado. As mensagens continuam salvas apenas neste navegador.';
+  });
+
+  document.getElementById('howToLink').addEventListener('click', function(e){
+    e.preventDefault();
+    configOverlay.classList.remove('open');
+    howtoOverlay.classList.add('open');
+  });
+
+  document.getElementById('exportBtn').addEventListener('click', function(){
+    var blob = new Blob([JSON.stringify(state.data, null, 2)], {type:'application/json'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'mensagens-calendario-' + todayKey() + '.json';
+    a.click();
+    showToast('Backup exportado!');
+  });
+  document.getElementById('importBtn').addEventListener('click', function(){
+    document.getElementById('importFile').click();
+  });
+  document.getElementById('importFile').addEventListener('change', function(e){
+    var file = e.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      try{
+        var imported = JSON.parse(ev.target.result);
+        if(imported && imported.messages){
+          mergeRemote(imported);
+          save(); renderCalendar(); updatePersonLabels();
+          showToast('Mensagens importadas com sucesso!');
+        } else {
+          showToast('Arquivo inválido.');
+        }
+      }catch(err){ showToast('Erro ao ler o arquivo.'); }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  });
+
+  document.querySelectorAll('#personToggle button').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('#personToggle button').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      state.person = btn.dataset.person;
+      save();
+      if(currentOpenKey && !isFuture(currentOpenKey)) renderEditableDay(currentOpenKey);
+    });
+  });
+
+  document.getElementById('prevYear').addEventListener('click', function(){
+    state.year--;
+    document.getElementById('yearLabel').textContent = state.year;
+    renderCalendar();
+  });
+  document.getElementById('nextYear').addEventListener('click', function(){
+    state.year++;
+    document.getElementById('yearLabel').textContent = state.year;
+    renderCalendar();
+  });
+
+  document.querySelectorAll('[data-close]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      btn.closest('.overlay').classList.remove('open');
+      if(btn.closest('.overlay') === dayOverlay) currentOpenKey = null;
+    });
+  });
+  document.querySelectorAll('.overlay').forEach(function(ov){
+    ov.addEventListener('click', function(e){
+      if(e.target === ov){
+        ov.classList.remove('open');
+        if(ov === dayOverlay) currentOpenKey = null;
+      }
+    });
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape'){
+      document.querySelectorAll('.overlay.open').forEach(function(ov){ ov.classList.remove('open'); });
+      currentOpenKey = null;
+    }
+  });
+
+  load();
+  document.getElementById('yearLabel').textContent = state.year;
+  updatePersonLabels();
+  document.querySelectorAll('#personToggle button').forEach(function(b){
+    b.classList.toggle('active', b.dataset.person === state.person);
+  });
+  renderCalendar();
+  updateSyncPill();
+  if(state.syncUrl){
+    pullFromRemote();
+    startSyncLoop();
+  }
+})();
+</script>
+</body>
+</html>
